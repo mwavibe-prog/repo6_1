@@ -49,9 +49,14 @@ body {
   height: 86px;
   flex-shrink: 0;
 }
-.brand-logo { height: 64px; width: auto; display: block; }
-.brand-logo-crest { height: 70px; }
-.brand-logo-weeswares { height: 52px; }
+.brand-logo {
+  width: auto;
+  display: block;
+  object-fit: contain;
+  /* Crest is portrait (~3:4), WeesWares is wide landscape (~2.5:1). */
+}
+.brand-logo-crest { height: 72px; max-width: 68px; }
+.brand-logo-weeswares { height: 52px; max-width: 180px; }
 
 /* ---------- Screens ---------- */
 .screen {
@@ -465,9 +470,8 @@ body {
 /* ---------- Responsive: narrow screens ---------- */
 @media (max-width: 900px) {
   #brand-bar { gap: 16px; height: 68px; padding: 8px 12px; }
-  .brand-logo { height: 52px; }
-  .brand-logo-crest { height: 56px; }
-  .brand-logo-weeswares { height: 42px; }
+  .brand-logo-crest { height: 56px; max-width: 52px; }
+  .brand-logo-weeswares { height: 40px; max-width: 140px; }
   .screen { top: 68px; }
 
   .host-layout { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }

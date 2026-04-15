@@ -77,8 +77,8 @@ public/
   game.js        Input, canvas rendering, interpolation, touch controls
   style.css      Large-type, high-contrast, tap-friendly styling
   logos/
-    crest.svg       Crest Secondary logo (SVG recreation)
-    weeswares.svg   WeesWares logo (SVG recreation)
+    crest-logo.png       Crest Secondary logo
+    weeswares-logo.png   WeesWares logo
 ```
 
 ### Rooms
@@ -113,9 +113,9 @@ Server → client:
 - `GET /api/rooms/:code` → basic room info (player count, current level)
 - `GET /health` → `{ ok, rooms, players }`
 
-## Replacing the logos with real PNGs
+## Replacing the logos
 
-The SVGs in `public/logos/` are faithful recreations built from the original images. To use your actual assets instead, drop the files into `public/logos/` as e.g. `crest.png` and `weeswares.png`, then update the `src` attributes in `public/index.html` (look for `#brand-bar`).
+The logos live in `public/logos/` (`crest-logo.png` and `weeswares-logo.png`). Swap the files in place to change the branding; they're referenced from `#brand-bar` in `public/index.html`. Crest is portrait (~3:4) and WeesWares is wide (~2.5:1); `.brand-logo-*` rules in `public/style.css` control their sizing.
 
 ## Configuration
 
