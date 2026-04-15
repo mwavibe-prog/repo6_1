@@ -7,10 +7,17 @@
     "start": "node server.js",
     "dev": "node server.js"
   },
-  "keywords": ["multiplayer", "platformer", "coop", "websocket", "game"],
+  "keywords": [
+    "multiplayer",
+    "platformer",
+    "coop",
+    "websocket",
+    "game"
+  ],
   "license": "MIT",
   "dependencies": {
     "express": "^4.19.2",
+    "qrcode": "^1.5.4",
     "ws": "^8.18.0"
   },
   "engines": {
