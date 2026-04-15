@@ -418,6 +418,7 @@ function publicPlayers(room) {
     alive: p.alive,
     deaths: p.deaths,
     atGoal: p.atGoal,
+    onGround: p.onGround,
   }));
 }
 

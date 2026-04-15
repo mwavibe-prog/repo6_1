@@ -48,7 +48,37 @@ body {
   border-bottom: 2px solid #d9d3c3;
   height: 86px;
   flex-shrink: 0;
+  position: relative;
 }
+
+/* Sound toggle: small round button in the corner of the brand bar */
+.sound-toggle {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid #d9d3c3;
+  background: white;
+  font-size: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.15s ease, transform 0.05s ease;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 4px 10px rgba(10,45,110,0.08);
+}
+.sound-toggle:hover { background: #f8f5ee; }
+.sound-toggle:active { transform: translateY(-50%) scale(0.94); }
+.sound-toggle .sound-icon { line-height: 1; }
+.sound-toggle .sound-off { display: none; }
+.sound-toggle.muted .sound-on { display: none; }
+.sound-toggle.muted .sound-off { display: inline; }
+.sound-toggle.muted { background: #eceae1; opacity: 0.8; }
 .brand-logo {
   width: auto;
   display: block;
@@ -472,6 +502,7 @@ body {
   #brand-bar { gap: 16px; height: 68px; padding: 8px 12px; }
   .brand-logo-crest { height: 56px; max-width: 52px; }
   .brand-logo-weeswares { height: 40px; max-width: 140px; }
+  .sound-toggle { right: 10px; width: 44px; height: 44px; font-size: 20px; }
   .screen { top: 68px; }
 
   .host-layout { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }

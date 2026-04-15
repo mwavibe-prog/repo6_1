@@ -27,6 +27,31 @@
     playerScreen.classList.toggle('hidden', name !== 'player');
   }
 
+  // ---------- Sound: unlock + toggle ----------
+  // The AudioContext can only start after a user gesture. Unlock on the
+  // first click/touch/keydown anywhere on the page.
+  const soundToggleBtn = el('sound-toggle');
+  let soundMuted = false;
+  try { soundMuted = localStorage.getItem('coopclimb.muted') === '1'; } catch (_) {}
+  if (window.SoundFX) window.SoundFX.setMuted(soundMuted);
+  if (soundToggleBtn) {
+    soundToggleBtn.classList.toggle('muted', soundMuted);
+    soundToggleBtn.addEventListener('click', () => {
+      if (!window.SoundFX) return;
+      soundMuted = !soundMuted;
+      window.SoundFX.setMuted(soundMuted);
+      soundToggleBtn.classList.toggle('muted', soundMuted);
+      try { localStorage.setItem('coopclimb.muted', soundMuted ? '1' : '0'); } catch (_) {}
+      if (!soundMuted) {
+        window.SoundFX.unlock().then(() => window.SoundFX.play('click'));
+      }
+    });
+  }
+  function unlockAudio() { if (window.SoundFX) window.SoundFX.unlock(); }
+  ['pointerdown', 'touchstart', 'keydown', 'click'].forEach((evt) => {
+    window.addEventListener(evt, unlockAudio, { once: true, passive: true });
+  });
+
   // ---------- Landing ----------
   const btnStart = el('btn-start');
   const btnJoin = el('btn-join');
@@ -88,6 +113,13 @@
   let goalStatus = { atGoal: 0, needed: 0, hold: 0 };
   let playerMeta = {};
 
+  // Sound-event tracking: remember previous plate/door/player states so
+  // we can play a sound only on transitions, not every frame.
+  const prevEntityState = new Map();
+  let prevMyOnGround = true;
+  let hasReceivedFirstLevel = false;
+  function playSfx(name) { if (window.SoundFX) window.SoundFX.play(name); }
+
   const camera = { x: 0, y: 0, scale: 1 };
 
   // =============================================================
@@ -123,6 +155,15 @@
         playerW = msg.playerW;
         playerH = msg.playerH;
         level = msg.level;
+        hasReceivedFirstLevel = true;
+        // Prime entity state so the initial 'state' doesn't trigger
+        // a phantom plateOn / doorOpen sound for entities that start
+        // pressed/open.
+        for (const e of level.entities) {
+          if (e.type === 'plate' || e.type === 'door') {
+            prevEntityState.set(e.id, { active: !!e.active, open: !!e.open });
+          }
+        }
         if (role === 'host') initHostView(msg);
         else initPlayerGame();
         updateLevelUi();
@@ -131,21 +172,54 @@
         level = msg.level;
         prevSnapshot = null;
         nextSnapshot = null;
+        prevEntityState.clear();
+        for (const e of level.entities) {
+          if (e.type === 'plate' || e.type === 'door') {
+            prevEntityState.set(e.id, { active: !!e.active, open: !!e.open });
+          }
+        }
         updateLevelUi();
         showToast(level.name, 2500);
+        // First 'level' message after 'welcome' is the SAME level they
+        // started on — don't play a level-complete fanfare for it.
+        if (hasReceivedFirstLevel) playSfx('levelComplete');
+        hasReceivedFirstLevel = true;
         break;
       case 'state': {
         const t = performance.now();
         prevSnapshot = nextSnapshot;
         nextSnapshot = { t, players: msg.players };
-        entities = msg.entities || [];
+        const newEntities = msg.entities || [];
+        // Detect plate & door transitions for sound effects
+        for (const e of newEntities) {
+          const prev = prevEntityState.get(e.id);
+          if (e.type === 'plate') {
+            if (prev && !prev.active && e.active) playSfx('plateOn');
+            else if (prev && prev.active && !e.active) playSfx('plateOff');
+          } else if (e.type === 'door') {
+            if (prev && !prev.open && e.open) playSfx('doorOpen');
+          }
+          prevEntityState.set(e.id, { active: !!e.active, open: !!e.open });
+        }
+        entities = newEntities;
         goalStatus = msg.goal || { atGoal: 0, needed: 0, hold: 0 };
         for (const p of msg.players) playerMeta[p.id] = { name: p.name, color: p.color };
+        // Local player landing detection (player view only)
+        if (role === 'player' && myId != null) {
+          const me = msg.players.find((p) => p.id === myId);
+          if (me) {
+            if (me.onGround && !prevMyOnGround) playSfx('land');
+            prevMyOnGround = !!me.onGround;
+          }
+        }
         break;
       }
       case 'playerJoin':
         playerMeta[msg.player.id] = { name: msg.player.name, color: msg.player.color };
         showToast(`${msg.player.name} joined!`, 1800);
+        // Don't play the chime for your own join (role=player receives
+        // this right after 'welcome' for themselves).
+        if (msg.player.id !== myId) playSfx('playerJoin');
         break;
       case 'playerLeave':
         delete playerMeta[msg.id];
@@ -153,6 +227,7 @@
         break;
       case 'win':
         showToast('🎉 You beat the game! Well done!', 4500);
+        playSfx('win');
         break;
     }
   }
@@ -326,6 +401,7 @@
         pressed[key] = true;
         input[key] = true;
         btn.classList.add('active');
+        if (key === 'jump') playSfx('jump');
         sendInput();
       };
       const release = (ev) => {
@@ -367,6 +443,7 @@
         case 'ArrowLeft': case 'KeyA': input.left = true; sendInput(); e.preventDefault(); break;
         case 'ArrowRight': case 'KeyD': input.right = true; sendInput(); e.preventDefault(); break;
         case 'Space': case 'ArrowUp': case 'KeyW':
+          if (!input.jump) playSfx('jump');
           input.jump = true; sendInput(); e.preventDefault(); break;
       }
     });

@@ -15,6 +15,10 @@
   <header id="brand-bar">
     <img src="logos/crest-logo.png" alt="Crest Secondary" class="brand-logo brand-logo-crest" />
     <img src="logos/weeswares-logo.png" alt="WeesWares" class="brand-logo brand-logo-weeswares" />
+    <button id="sound-toggle" class="sound-toggle" aria-label="Toggle sound" title="Toggle sound">
+      <span class="sound-icon sound-on" aria-hidden="true">🔊</span>
+      <span class="sound-icon sound-off" aria-hidden="true">🔇</span>
+    </button>
   </header>
 
   <!-- ======================================================= -->
@@ -133,6 +137,7 @@
     <div id="player-toast" class="toast"></div>
   </section>
 
+  <script src="sound.js"></script>
   <script src="game.js"></script>
 </body>
 </html>
