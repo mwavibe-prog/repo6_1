@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Co-op Climb — Multiplayer Platformer</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="join-overlay" class="overlay">
+    <div class="panel">
+      <h1>Co-op Climb</h1>
+      <p class="subtitle">A multiplayer platformer for up to 15 players.<br/>
+        Work together — stand on pressure plates, stack on each other's heads, and get everyone past the obstacles.</p>
+      <label for="name-input">Your name</label>
+      <input id="name-input" type="text" maxlength="16" placeholder="e.g. Alice" autocomplete="off" />
+      <button id="join-btn">Join game</button>
+      <div class="controls">
+        <h3>Controls</h3>
+        <ul>
+          <li><kbd>A</kbd>/<kbd>←</kbd> move left</li>
+          <li><kbd>D</kbd>/<kbd>→</kbd> move right</li>
+          <li><kbd>Space</kbd>/<kbd>W</kbd>/<kbd>↑</kbd> jump</li>
+          <li><kbd>R</kbd> respawn at checkpoint (if stuck)</li>
+          <li><kbd>Shift+R</kbd> vote-restart the level</li>
+        </ul>
+      </div>
+      <div id="join-status" class="status"></div>
+    </div>
+  </div>
+
+  <div id="game-root" class="hidden">
+    <canvas id="game" width="1280" height="720"></canvas>
+    <div id="hud">
+      <div class="hud-left">
+        <div id="level-name">Level 1</div>
+        <div id="level-progress"></div>
+      </div>
+      <div class="hud-right">
+        <div id="player-count">Players: 0</div>
+        <div id="goal-meter">At goal: 0 / 0</div>
+      </div>
+    </div>
+    <div id="hold-bar-wrap" class="hidden">
+      <div class="hold-label">Hold at the goal...</div>
+      <div id="hold-bar"><div id="hold-fill"></div></div>
+    </div>
+    <div id="player-list"></div>
+    <div id="toast"></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

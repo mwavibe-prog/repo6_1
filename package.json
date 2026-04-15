@@ -1,0 +1,19 @@
+{
+  "name": "coop-climb",
+  "version": "1.0.0",
+  "description": "A multiplayer co-op platformer for up to 15 players. Work together to get past obstacles!",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["multiplayer", "platformer", "coop", "websocket", "game"],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.18.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
